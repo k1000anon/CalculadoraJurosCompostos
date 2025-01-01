@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Juros Compostos</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px; /* Espaço para o rodapé */
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Rodapé */
+        footer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px; /* Distância do conteúdo */
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculadora de Juros Compostos</h1>
+<br></br>
+        <label for="capital">Valor Inicial:</label>
+        <input type="number" id="capital" placeholder="Ex: 1000" value="0" required>
+        
+        <label for="aporte">Valor Mensal:</label>
+        <input type="number" id="aporte" placeholder="Ex: 100" value="0" required>
+
+        <label for="juros">Taxa de Juros Mensal:</label>
+        <input type="number" id="juros" placeholder="Ex: 5 para 5%" value="0" required>
+
+        <label for="tempo">Tempo em meses:</label>
+        <input type="number" id="tempo" placeholder="Ex: 12" value="0" required>
+
+        <button onclick="calcularJurosCompostosComAportes()">Calcular Montante</button>
+
+        <div id="result"></div>
+    </div>
+
+   <footer>
+<br></br>
+<br></br>
+    <b>    k1000 <br> <br> 01/01/2025
+ </b>
+    </footer>
+
+
+    <script>
+        // Função para formatar os números com vírgulas
+        function formatNumber(num) {
+            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Função para calcular o montante final com aportes mensais
+        function calcularJurosCompostosComAportes() {
+            const capital = parseFloat(document.getElementById("capital").value);
+            let juros = parseFloat(document.getElementById("juros").value);
+            const tempo = parseInt(document.getElementById("tempo").value);
+            const aporte = parseFloat(document.getElementById("aporte").value);
+
+            // Verificar se os campos estão preenchidos corretamente
+            if (isNaN(capital) || isNaN(juros) || isNaN(tempo) || isNaN(aporte)) {
+                alert("Por favor, preencha todos os campos corretamente.");
+                return;
+            }
+
+            // Convertendo a taxa de juros de percentual para decimal
+            juros = juros / 100;
+
+            // Aplicar a fórmula dos juros compostos com aportes mensais:
+            // M = C * (1 + i)^t + P * [(1 + i)^t - 1] / i
+            const montante = capital * Math.pow((1 + juros), tempo) + aporte * ((Math.pow((1 + juros), tempo) - 1) / juros);
+
+            // Calcular o total investido e os juros
+            const totalInvestido = capital + aporte * tempo;
+            const totalEmJuros = montante - totalInvestido;
+
+            // Exibir o resultado
+            document.getElementById("result").innerHTML = ` 
+                <p><strong>Valor Total Final:</strong> ${formatNumber(montante)}</p>
+                <p><strong>Valor Total Investido:</strong> ${formatNumber(totalInvestido)}</p>
+                <p><strong>Total em Juros:</strong> ${formatNumber(totalEmJuros)}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
