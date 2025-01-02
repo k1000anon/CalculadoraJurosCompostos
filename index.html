@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Juros Compostos</title>
+    <title>Calculadora de Datas</title>
     <style>
         /* Estilos gerais */
         body {
@@ -40,18 +40,34 @@
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #000000;
             color: white;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #000000;
         }
 
         #result {
             margin-top: 20px;
             font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            display: none;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
         }
 
         /* Rodapé */
@@ -82,8 +98,12 @@
                 font-size: 24px; /* Tamanho de fonte ajustado para dispositivos móveis */
             }
 
-            label {
-                font-size: 14px; /* Menor tamanho de fonte para rótulos */
+            h2 {
+                font-size: 20px; /* Reduzido para boa legibilidade em telas pequenas */
+            }
+
+            table, th, td {
+                font-size: 14px; /* Fonte menor para a tabela */
             }
 
             footer {
@@ -95,66 +115,77 @@
 <body>
 
     <div class="container">
-        <h1>Calculadora de Juros Compostos</h1>
-        
-        <label for="capital">Valor Inicial:</label>
-        <input type="number" id="capital" placeholder="Ex: 1000" value="0" required>
-        
-        <label for="aporte">Valor Mensal:</label>
-        <input type="number" id="aporte" placeholder="Ex: 100" value="0" required>
+        <h1>Calculadora de Datas</h1>
 
-        <label for="juros">Taxa de Juros Mensal:</label>
-        <input type="number" id="juros" placeholder="Ex: 5 para 5%" value="0" required>
-
-        <label for="tempo">Tempo em meses:</label>
-        <input type="number" id="tempo" placeholder="Ex: 12" value="0" required>
-
-        <button onclick="calcularJurosCompostosComAportes()">Calcular Montante</button>
+        <h2>Calcular Diferença entre Duas Datas</h2>
+        <label for="date1">Data Inicial:</label>
+        <input type="date" id="date1">
+        <label for="date2">Data Final:</label>
+        <input type="date" id="date2">
+        <button onclick="calcularDiferenca()">Calcular Diferença</button>
 
         <div id="result"></div>
+
+        <h3>Diferença em várias unidades:</h3>
+        <table id="resultTable">
+            <tr>
+                <th>Unidade</th>
+                <th>Valor</th>
+            </tr>
+            <tr>
+                <td>Dias</td>
+                <td id="days"></td>
+            </tr>
+            <tr>
+                <td>Semanas</td>
+                <td id="weeks"></td>
+            </tr>
+            <tr>
+                <td>Meses</td>
+                <td id="months"></td>
+            </tr>
+            <tr>
+                <td>Anos</td>
+                <td id="years"></td>
+            </tr>
+        </table>
     </div>
 
-   <footer>
-        <br><br>
-        k1000
+    <footer>
+        <p>&copy; k1000</p> 
     </footer>
 
     <script>
         // Função para formatar os números com vírgulas
         function formatNumber(num) {
-            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            return num.toLocaleString('pt-BR');
         }
 
-        // Função para calcular o montante final com aportes mensais
-        function calcularJurosCompostosComAportes() {
-            const capital = parseFloat(document.getElementById("capital").value);
-            let juros = parseFloat(document.getElementById("juros").value);
-            const tempo = parseInt(document.getElementById("tempo").value);
-            const aporte = parseFloat(document.getElementById("aporte").value);
+        // Função para calcular a diferença entre duas datas e exibir em dias, semanas, meses e anos
+        function calcularDiferenca() {
+            const date1 = new Date(document.getElementById("date1").value);
+            const date2 = new Date(document.getElementById("date2").value);
 
-            // Verificar se os campos estão preenchidos corretamente
-            if (isNaN(capital) || isNaN(juros) || isNaN(tempo) || isNaN(aporte)) {
-                alert("Por favor, preencha todos os campos corretamente.");
+            // Garantir que a data final seja maior que a data inicial
+            if (date2 < date1) {
+                alert("A data final deve ser posterior à data inicial.");
                 return;
             }
 
-            // Convertendo a taxa de juros de percentual para decimal
-            juros = juros / 100;
+            const diffTime = date2 - date1;
 
-            // Aplicar a fórmula dos juros compostos com aportes mensais:
-            // M = C * (1 + i)^t + P * [(1 + i)^t - 1] / i
-            const montante = capital * Math.pow((1 + juros), tempo) + aporte * ((Math.pow((1 + juros), tempo) - 1) / juros);
+            // Calcular as diferenças em unidades de tempo
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Dias
+            const diffWeeks = Math.floor(diffDays / 7); // Semanas
+            const diffMonths = (diffDays / 30).toFixed(2); // Meses (aproximadamente, com 2 casas decimais)
+            const diffYears = (diffDays / 365).toFixed(2); // Anos (aproximadamente, com 2 casas decimais)
 
-            // Calcular o total investido e os juros
-            const totalInvestido = capital + aporte * tempo;
-            const totalEmJuros = montante - totalInvestido;
-
-            // Exibir o resultado
-            document.getElementById("result").innerHTML = ` 
-                <p><strong>Valor Total Final:</strong> ${formatNumber(montante)}</p>
-                <p><strong>Valor Total Investido:</strong> ${formatNumber(totalInvestido)}</p>
-                <p><strong>Total em Juros:</strong> ${formatNumber(totalEmJuros)}</p>
-            `;
+            // Exibir os resultados
+            document.getElementById("resultTable").style.display = "table";
+            document.getElementById("days").textContent = formatNumber(diffDays);
+            document.getElementById("weeks").textContent = formatNumber(diffWeeks);
+            document.getElementById("months").textContent = formatNumber(diffMonths);
+            document.getElementById("years").textContent = formatNumber(diffYears);
         }
     </script>
 
